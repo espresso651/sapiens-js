@@ -1,0 +1,155 @@
+﻿<html>
+    <head>
+        <title>Market Simulator</title>
+        <script src="buttons.js"></script>
+        <script src="clock.js"></script>
+        <script src="items.js"></script>
+        <script src="market.js"></script>
+        <script src="menu.js"></script>
+        <script src="restock.js"></script>
+        <script src="varstore.js"></script>
+    </head>
+    
+    <body onLoad="start()" bgcolor="#38A832">
+        <p>Project Merchant</p>
+        <form name="merchant">
+            <textarea rows=32 cols=75 name="maingame">Monday, July 1: 10:00 AM EST</textarea>
+            <textarea rows=32 cols=75 name="tshoot">Log</textarea>
+
+            <table border=0>
+                <tr>
+                    <td>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="button" value="↑" onClick="goUp()" />
+                        <br />
+                        <input type="button" value="←" onClick="goLeft()" />
+                        <input type="button" name="ok" value="ok" onClick="goOkay()" />
+                        <input type="button" value="→" onClick="goRight()" />
+                        &nbsp;&#36; <input name="field" />
+                        
+                        <br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="button" value="↓" onClick="goDown()" />
+                    </td>
+                </tr>
+            </table>
+        </form>
+        
+<!--Game info below-->
+
+        <table>
+            <tr>
+                <td width=33% valign=top>
+                    <h3 align=center>Project Merchant Overview</h3>
+                    <p><b>Project Merchant</b> is a game where you buy and sell goods on a simulated market.  </p>
+                    <p>Proposed title: <b>Market Sandbox</b></p>
+                    
+                    <h3 align=center>Sketchpad</h3>
+                    <ul><b>Modes</b>
+                        <li>Sandbox Mode: Allow player to monitor and change market variables to see how the price changes.  Cannot buy items.</li>
+                        <li>Scenarios:  Certain preset condition with a challenge for the player to perform a certain task.</li>
+                    </ul>
+                    <ul><b>Sandbox Mode Settings</b>
+                        <li>Personality ratios.</li>
+                        <li>Number of buyers</li>
+                        <li>Number of potential sellers</li>
+                        <li>Game speed</li>
+                        <li>Add and remove listings</li>
+                        <li>Pause button</li>
+                        <li>Item popularity</li>
+                        <li>Sales records</li>
+                    <ul><b>Blank canvas...</b>
+                        <li>I might reduce the timer even further...</li>
+                        <li>Have sales rank affect popularity.  AI is more likely to buy a popular item.</li>
+                    </ul>
+                </td>
+                
+                <td width=33% valign=top>
+                    <h3 align=center>Bugs</h3>
+                    <ul><b>Known bugs</b>
+                        <li>A doobyflop was listed for 1 cent, and when sold the average sale price became NaN.</li>
+                        <li>Inventory is listed in wrong order.</li>
+                        <li>Staying in the list or sale screen prevents items from being sold to the AI.</li>
+                        <li>A "You can't afford this" warning on a second purchase, despite having enough money.</li>
+                        <li>After purchase, it is supposed to take you to the main menu, but instead goes to inventory.  This is a good thing, but still a bug.  I hope to make this an actual feature now.</li>
+                        <li>If the menumode changes when hitting OK, and there is a later menu mode listed in goOkay, it will do both.
+                        <li>Similar bug, if you hit "no" on a purchase, it will create a loop sending you back to the confirmation screen.  Pressing left will get you back to the store screen.</li>
+                        <li>If an item is not available, the selection will be off by one, and you can still buy the non-existant item.
+                    <li>The AI's purchases may not be affecting the "available for sale" list.</li>
+                    </ul>
+                    
+                    <ul><b>Resolved bugs</b>
+                        <li>When buying an item, the inventory will duplicate itself.  It will also display additional items on the same line, looking like two decimal places.  Should be fixed.</li>
+                        <li>After buying, menumode switches to depricated "invent" mode.  This is the source of the above bug.  This was fixed, the problem was the goOkay command was running menuview after running confirm with one press, and menuview was calling the old inventory function.  I have a workaround, btnlock, I will implement.</li>
+                        <li><strike>Current funds drops 0 from decimal places.</strike></li>
+                        <li><strike>12 PM is listed as 12 AM.</strike> New AM/PM system implemented, corrects this issue.</li>
+                        <li><strike>A possible sale price of 0.00.</strike>All new sales have a minimum of 3 cents.</li>
+                        <li><strike>A whatsit was sold for 73.44, then the next one was 24.23.  The 55.36 doobyflop was then said to be too expensive, despite having 102.33 remaining.  (Likely a problem with the sorting, and should be resolved)</strike></li>
+                    </ul>
+                    
+                    <h3 align=center>To-do list</h3>
+                    <ul>
+                        <li>Menu mode needs fixed.  Use mm2 for this.  Assign all modes to "mm2" instead of menumode.  Then at end of all button commands, a new function reassigns menumode's value to match mm2.  So menumode stays consistent until all functions are done.</li>
+                        <li><strike>Averages not finished.  Just too time consuming, and I might write a different function for it anyway.</strike></li>
+                        <li><strike>Cleanup code, it's getting to be a mess!</strike></li>
+                        <li>Sales history.</li>
+                        <li><strike>Replace aiitem1t with item1low</strike></li>
+                    </ul>
+                </td>
+                
+                <td width=33% valign=top>
+                    <h3 align=center>Changelog</h3>
+
+                    <ul><b>0.07 - 7/17/13</b>
+                        <li>Lots of overhauls to the code.</li>
+                        <li>Improved button lock.</li>
+                        <li>Changed how buttons and menus work.</li>
+                        <li>Further tweaking of the sales generation.  Still needs work.  Now it is 1.5x more likely for an item to be purchases, however there are conditions that negate a purchase so it balances out.</li>
+                        
+                    <ul><b>0.06 - 7/15/13</b>
+                        <li>Fixed current funds dropping decimal places.</li>
+                        <li>A lot of code reorganization.
+                        <li>Rewrote item spawning method.  More random item selection (which I can now modify on popularity), and more consistent prices.  As a side effect, the prices are much lower.</li>
+                        <li>To combat low prices, I increased the range of random prices by 50%.</li>
+                        <li>Started popularity system, left unfinished because I got distracted.</li>
+
+                    </ul>
+
+                    <ul><b>0.05 - 7/14/13</b>
+                        <li>Added initial support for pausing.</li>
+                        <li>Revised inventory display system.</li>
+                        <li>Added initial support for sales.  No sales yet.</li>
+                        <li>Some various renaming and reorganizing.</li>
+                        <li>Tripled biz triggers.  Might decrease sales triggers in response.</li>
+                        <li>Changed item listing method, now supports unlimited items.</li>
+                    </ul>
+
+                    <ul><b>0.04 - 7/13/13</b>
+                        <li>Implemented new personality system.</li>
+                        <li>New system should see prices dropping normally, with some odd spikes..(still having issues)</li>
+                        <li>Changed the AM/PM and hour counting, should resolve clock issues.</li>
+                        <li>Reduced all money to 1/10.</li>
+                        <li>Implemented troubleshooting log.</li>
+                    </ul>
+
+                    <ul><b>0.03 - 7/1/13</b>
+                        <li>Reorganized files.</li>
+                        <li>Began Komodo support.</li>
+                        <li>Created AI.</li>
+                        <li>Purchasing works completely.</li>
+                        <li>AI can now purchase and list new items.</li>
+                        <li>Began sale tracking.</li>
+                        <li>Implemented sales ranks.</li>
+                        <li>Added "cheat" button, reveals debug info.</li>
+                        <li>Began renaming variables and removing outdated code (outdated in days, that's sad).</li>
+                    </ul>
+                    
+                    <ul><b>0.02 - 6/28/13</b>
+                        <li>Added preliminary purchase support.</li>
+                    </ul>
+                    
+                    <ul><b>0.01 - 6/27/13</b>
+                        <li>Started project.</li>
+                    </ul>
+                </td>
+            </tr>
+        </table>
+    </body>
+</html>
